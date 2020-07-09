@@ -21,7 +21,6 @@ type Zone struct {
 	Amount string             `json:"amount" bson:"amount,omitempty"`
 }
 
-
 //Event Model
 type Event struct {
 	ID          primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
@@ -30,7 +29,6 @@ type Event struct {
 	Date        string             `json:"date" bson:"date,omitempty"`
 	Zones       []Zone             `json:"zones" bson:"zones,omitempty"`
 }
-
 
 //User Model
 type User struct {
@@ -51,14 +49,14 @@ type Order struct {
 var client *mongo.Client
 
 func getUsers(w http.ResponseWriter, r *http.Request) {
-	collection := client.Database("tickit").Collection("users")
+	collection := client.Database("tick-it").Collection("users")
 	findOptions := options.Find()
 	cur, err := collection.Find(context.TODO(), bson.D{{}}, findOptions)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var results []*User
+	var results []User
 
 	for cur.Next(context.TODO()) {
 
@@ -68,7 +66,7 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 
-		results = append(results, &elem)
+		results = append(results, elem)
 	}
 
 	if err := cur.Err(); err != nil {
@@ -77,7 +75,7 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 
 	cur.Close(context.TODO())
 
-	fmt.Printf("Found multiple documents (array of pointers): %+v\n", results)
+	fmt.Printf("Found users: %+v\n", results)
 }
 
 func main() {
