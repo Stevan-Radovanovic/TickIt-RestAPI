@@ -7,52 +7,21 @@ import (
 	"log"
 	"net/http"
 
+	"./models"
+
 	"github.com/gorilla/mux"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-//Zone Model
-type Zone struct {
-	ID     primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Name   string             `json:"name,omitempty" bson:"name,omitempty"`
-	Amount string             `json:"amount" bson:"amount,omitempty"`
-}
-
-//Event Model
-type Event struct {
-	ID          primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Name        string             `json:"name,omitempty" bson:"name,omitempty"`
-	Description string             `json:"description" bson:"description,omitempty"`
-	Date        string             `json:"date" bson:"date,omitempty"`
-	Zones       []Zone             `json:"zones" bson:"zones,omitempty"`
-}
-
-//User Model
-type User struct {
-	ID       primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Email    string             `json:"email,omitempty" bson:"email,omitempty"`
-	Password string             `json:"password" bson:"password,omitempty"`
-}
-
-//Order Model
-type Order struct {
-	ID     primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Email  string             `json:"email,omitempty" bson:"email,omitempty"`
-	Ticket string             `json:"ticket" bson:"ticket,omitempty"`
-	Date   string             `json:"date" bson:"date,omitempty"`
-	Amount string             `json:"amount" bson:"amount,omitempty"`
-}
 
 var client *mongo.Client
 
 func getUserByEmail(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var user User
+	var user models.User
 	params := mux.Vars(r)
 	email := params["email"]
 
@@ -80,11 +49,11 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	var users []User
+	var users []models.User
 
 	for cur.Next(context.TODO()) {
 
-		var elem User
+		var elem models.User
 		err := cur.Decode(&elem)
 		if err != nil {
 			log.Fatal(err)
