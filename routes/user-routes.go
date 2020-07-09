@@ -12,8 +12,31 @@ import (
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+//GetUserByID route
+func GetUserByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var user models.User
+	params := mux.Vars(r)
+	fmt.Println(params)
+	id, _ := primitive.ObjectIDFromHex(params["id"])
+	fmt.Println(id)
+	collection := database.Client.Database("tick-it").Collection("users")
+
+	filter := bson.M{"_id": id}
+	err := collection.FindOne(context.TODO(), filter).Decode(&user)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Found user")
+	json.NewEncoder(w).Encode(user)
+}
 
 //GetUserByEmail route
 func GetUserByEmail(w http.ResponseWriter, r *http.Request) {
