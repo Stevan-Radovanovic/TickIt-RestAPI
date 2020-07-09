@@ -12,6 +12,7 @@ import (
 
 	"../database"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -88,4 +89,26 @@ func GetOrders(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("Found orders")
 	json.NewEncoder(w).Encode(orders)
+}
+
+//GetOrderByID route
+func GetOrderByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var order models.Order
+	params := mux.Vars(r)
+	fmt.Println(params)
+	id, _ := primitive.ObjectIDFromHex(params["id"])
+	fmt.Println(id)
+	collection := database.Client.Database("tick-it").Collection("orders")
+
+	filter := bson.M{"_id": id}
+	err := collection.FindOne(context.TODO(), filter).Decode(&order)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Found order")
+	json.NewEncoder(w).Encode(order)
 }

@@ -22,6 +22,8 @@ func main() {
 	r.HandleFunc("/users/{email}", routes.GetUserByEmail).Methods("GET")
 	r.HandleFunc("/orders", routes.GetOrders).Methods("GET")
 	r.HandleFunc("/orders/{email}", routes.GetOrdersByEmail).Methods("GET")
+	r.HandleFunc("/orders/id/{id}", routes.GetOrderByID).Methods("GET")
+	r.HandleFunc("/events", routes.GetEvents).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
