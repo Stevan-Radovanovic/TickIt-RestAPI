@@ -97,9 +97,7 @@ func GetOrderByID(w http.ResponseWriter, r *http.Request) {
 
 	var order models.Order
 	params := mux.Vars(r)
-	fmt.Println(params)
 	id, _ := primitive.ObjectIDFromHex(params["id"])
-	fmt.Println(id)
 	collection := database.Client.Database("tick-it").Collection("orders")
 
 	filter := bson.M{"_id": id}
