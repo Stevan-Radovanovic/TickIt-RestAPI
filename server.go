@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -49,6 +50,9 @@ type Order struct {
 var client *mongo.Client
 
 func getUsers(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
 	collection := client.Database("tick-it").Collection("users")
 	findOptions := options.Find()
 	cur, err := collection.Find(context.TODO(), bson.D{{}}, findOptions)
@@ -56,7 +60,7 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	var results []User
+	var users []User
 
 	for cur.Next(context.TODO()) {
 
@@ -66,7 +70,7 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 
-		results = append(results, elem)
+		results = append(users, elem)
 	}
 
 	if err := cur.Err(); err != nil {
@@ -75,7 +79,8 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 
 	cur.Close(context.TODO())
 
-	fmt.Printf("Found users: %+v\n", results)
+	fmt.Printf("Found users")
+	json.NewEncoder(w).Encode(users)
 }
 
 func main() {
