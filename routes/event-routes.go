@@ -90,3 +90,25 @@ func DeleteEvent(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(deleteResult)
 }
+
+//CreateEvent route
+func CreateEvent(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var event models.Event
+
+	// we decode our body request params
+	_ = json.NewDecoder(r.Body).Decode(&event)
+
+	// connect db
+	collection := database.Client.Database("tick-it").Collection("sportevents")
+
+	// insert our book model.
+	result, err := collection.InsertOne(context.TODO(), event)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	json.NewEncoder(w).Encode(result)
+}

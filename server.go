@@ -28,6 +28,8 @@ func main() {
 	r.HandleFunc("/users/{id}", routes.DeleteUser).Methods("DELETE")
 	r.HandleFunc("/orders/{id}", routes.DeleteOrder).Methods("DELETE")
 	r.HandleFunc("/events/{id}", routes.DeleteEvent).Methods("DELETE")
+	r.HandleFunc("/orders", routes.CreateOrder).Methods("POST")
+	r.HandleFunc("/events", routes.CreateEvent).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(":8000", r))
 }

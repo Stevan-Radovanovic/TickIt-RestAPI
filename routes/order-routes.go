@@ -130,3 +130,25 @@ func DeleteOrder(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(deleteResult)
 }
+
+//CreateOrder route
+func CreateOrder(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var order models.Order
+
+	// we decode our body request params
+	_ = json.NewDecoder(r.Body).Decode(&order)
+
+	// connect db
+	collection := database.Client.Database("tick-it").Collection("orders")
+
+	// insert our book model.
+	result, err := collection.InsertOne(context.TODO(), order)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	json.NewEncoder(w).Encode(result)
+}
