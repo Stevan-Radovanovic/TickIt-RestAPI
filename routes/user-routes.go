@@ -93,3 +93,23 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Found users")
 	json.NewEncoder(w).Encode(users)
 }
+
+//DeleteUser route
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	id, err := primitive.ObjectIDFromHex(params["id"])
+
+	collection := database.Client.Database("tick-it").Collection("users")
+
+	filter := bson.M{"_id": id}
+
+	deleteResult, err := collection.DeleteOne(context.TODO(), filter)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	json.NewEncoder(w).Encode(deleteResult)
+}

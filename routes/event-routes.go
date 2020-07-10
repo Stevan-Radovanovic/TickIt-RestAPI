@@ -70,3 +70,23 @@ func GetEventByID(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Found event")
 	json.NewEncoder(w).Encode(event)
 }
+
+//DeleteEvent route
+func DeleteEvent(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	id, err := primitive.ObjectIDFromHex(params["id"])
+
+	collection := database.Client.Database("tick-it").Collection("sportevents")
+
+	filter := bson.M{"_id": id}
+
+	deleteResult, err := collection.DeleteOne(context.TODO(), filter)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	json.NewEncoder(w).Encode(deleteResult)
+}
